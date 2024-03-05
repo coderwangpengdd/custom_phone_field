@@ -404,6 +404,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       cursorHeight: widget.cursorHeight,
       cursorRadius: widget.cursorRadius,
       cursorWidth: widget.cursorWidth,
+      cursorErrorColor: widget.cursorColor,
       showCursor: widget.showCursor,
       onFieldSubmitted: widget.onSubmitted,
       magnifierConfiguration: widget.magnifierConfiguration,
@@ -471,28 +472,40 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(
-                  width: 4,
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          right: BorderSide(
+                              width: 1,
+                              color: Color.fromRGBO(255, 255, 255, 0.1)))),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (widget.showCountryFlag) ...[
+                        kIsWeb
+                            ? Image.asset(
+                                'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
+                                package: 'intl_phone_field',
+                                width: 32,
+                              )
+                            : Text(
+                                _selectedCountry.flag,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                        const SizedBox(width: 8),
+                      ],
+                      if (widget.enabled &&
+                          widget.showDropdownIcon &&
+                          widget.dropdownIconPosition ==
+                              IconPosition.leading) ...[
+                        widget.dropdownIcon,
+                      ],
+                    ],
+                  ),
                 ),
-                if (widget.showCountryFlag) ...[
-                  kIsWeb
-                      ? Image.asset(
-                          'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
-                          package: 'intl_phone_field',
-                          width: 32,
-                        )
-                      : Text(
-                          _selectedCountry.flag,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                  const SizedBox(width: 8),
-                ],
-                if (widget.enabled &&
-                    widget.showDropdownIcon &&
-                    widget.dropdownIconPosition == IconPosition.leading) ...[
-                  widget.dropdownIcon,
-                  const SizedBox(width: 4),
-                ],
+                const SizedBox(width: 45),
                 FittedBox(
                   child: Text(
                     '+${_selectedCountry.dialCode}',

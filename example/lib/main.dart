@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Color.fromRGBO(58, 64, 80, 1),
         appBar: AppBar(
           title: Text('Phone Field Example'),
         ),
@@ -55,13 +56,39 @@ class _MyAppState extends State<MyApp> {
                 ),
                 IntlPhoneField(
                   focusNode: focusNode,
+                  disableAutoFillHints: true,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                   decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(),
-                    ),
-                  ),
+                      filled: true,
+                      contentPadding: EdgeInsets.zero,
+                      fillColor: Color.fromRGBO(144, 116, 235, 0.1),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              color: Color.fromRGBO(255, 255, 255, 0.1))),
+                      focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              color: Color.fromRGBO(255, 255, 255, 0.1))),
+                      counterText: "",
+                      hintText: 'phone number',
+                      hintStyle: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 0.32),
+                          fontSize: 16,
+                          height: 1),
+                      errorText: ""),
                   languageCode: "en",
+                  invalidNumberMessage: "",
+                  dropdownTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                  cursorColor: Colors.white,
+                  dropdownIcon: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onChanged: (phone) {
                     print(phone.completeNumber);
                   },
