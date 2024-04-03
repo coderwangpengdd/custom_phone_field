@@ -40,6 +40,8 @@ class IntlPhoneField extends StatefulWidget {
 
   final ValueChanged<Country>? onCountryChanged;
 
+  final ValueChanged<String>? onCountryEdit;
+
   /// An optional method that validates an input. Returns an error string to display if the input is invalid, or null otherwise.
   ///
   /// A [PhoneNumber] is passed to the validator as argument.
@@ -272,6 +274,7 @@ class IntlPhoneField extends StatefulWidget {
     this.onChanged,
     this.countries,
     this.onCountryChanged,
+    this.onCountryEdit,
     this.onSaved,
     this.showDropdownIcon = true,
     this.dropdownDecoration = const BoxDecoration(),
@@ -308,6 +311,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
   late Country _selectedCountry;
   late List<Country> filteredCountries;
   late String number;
+  final codeControler = TextEditingController();
 
   String? validatorMessage;
 
@@ -359,6 +363,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         });
       }
     }
+    codeControler.text = "+" + _selectedCountry.dialCode;
   }
 
   Future<void> _changeCountry() async {
@@ -465,51 +470,79 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         decoration: widget.dropdownDecoration,
         child: InkWell(
           borderRadius: widget.dropdownDecoration.borderRadius as BorderRadius?,
-          onTap: widget.enabled ? _changeCountry : null,
+          // onTap: widget.enabled ? _changeCountry : null,
           child: Padding(
             padding: widget.flagsButtonPadding,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Visibility(
+                    visible: false,
+                    replacement: Container(
+                      width: 70,
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              right: BorderSide(
+                                  width: 1,
+                                  color: Color.fromRGBO(255, 255, 255, 0.1)))),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (widget.showCountryFlag) ...[
+                            kIsWeb
+                                ? Image.asset(
+                                    'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
+                                    package: 'intl_phone_field',
+                                    width: 32,
+                                  )
+                                : Text(
+                                    _selectedCountry.flag,
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                            const SizedBox(width: 8),
+                          ],
+                          if (widget.enabled &&
+                              widget.showDropdownIcon &&
+                              widget.dropdownIconPosition ==
+                                  IconPosition.leading) ...[
+                            widget.dropdownIcon,
+                          ],
+                        ],
+                      ),
+                    )),
+                // const SizedBox(width: 45),
+                // FittedBox(
+                //   child: Text(
+                //     '+${_selectedCountry.dialCode}',
+                //     style: widget.dropdownTextStyle,
+                //   ),
+                // ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          right: BorderSide(
-                              width: 1,
-                              color: Color.fromRGBO(255, 255, 255, 0.1)))),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (widget.showCountryFlag) ...[
-                        kIsWeb
-                            ? Image.asset(
-                                'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
-                                package: 'intl_phone_field',
-                                width: 32,
-                              )
-                            : Text(
-                                _selectedCountry.flag,
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                        const SizedBox(width: 8),
-                      ],
-                      if (widget.enabled &&
-                          widget.showDropdownIcon &&
-                          widget.dropdownIconPosition ==
-                              IconPosition.leading) ...[
-                        widget.dropdownIcon,
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 45),
-                FittedBox(
-                  child: Text(
-                    '+${_selectedCountry.dialCode}',
-                    style: widget.dropdownTextStyle,
+                  width: 60,
+                  child: TextField(
+                    controller: codeControler,
+                    style: widget.style,
+                    textAlign: TextAlign.end,
+                    cursorColor: widget.cursorColor,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(borderSide: BorderSide.none),
+                        enabledBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                        contentPadding: EdgeInsets.zero),
+                    onChanged: (value) {
+                      if (value == "") {
+                        codeControler.text = "+";
+                      }
+                      if (widget.onCountryEdit != null) {
+                        widget.onCountryEdit!(codeControler.text);
+                      }
+                    },
                   ),
                 ),
                 if (widget.enabled &&
