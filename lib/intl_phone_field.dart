@@ -538,7 +538,10 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                     onChanged: (value) {
                       if (!value.contains('+')) {
                         codeControler.text = "+" + value;
+                      } else {
+                        codeControler.text = value;
                       }
+                      debugPrint("[country changed] ${codeControler.text}");
                       if (widget.onCountryEdit != null) {
                         widget.onCountryEdit!(codeControler.text);
                       }
