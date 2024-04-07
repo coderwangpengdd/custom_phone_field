@@ -536,8 +536,8 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                             OutlineInputBorder(borderSide: BorderSide.none),
                         contentPadding: EdgeInsets.zero),
                     onChanged: (value) {
-                      if (value == "") {
-                        codeControler.text = "+";
+                      if (!value.contains('+')) {
+                        codeControler.text = "+" + value;
                       }
                       if (widget.onCountryEdit != null) {
                         widget.onCountryEdit!(codeControler.text);
