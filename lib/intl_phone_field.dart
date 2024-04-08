@@ -539,7 +539,11 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                       if (!value.contains('+')) {
                         codeControler.text = "+" + value;
                       } else {
-                        codeControler.text = value;
+                        if (!value.startsWith("+")) {
+                          codeControler.text = value.replaceRange(0, 1, "");
+                        } else {
+                          codeControler.text = value;
+                        }
                       }
                       debugPrint("[country changed] ${codeControler.text}");
                       if (widget.onCountryEdit != null) {
